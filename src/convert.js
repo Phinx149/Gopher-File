@@ -1,14 +1,8 @@
 import React, { useState } from "react";
 import * as pdfjsLib from "pdfjs-dist";
-import { GlobalWorkerOptions } from "pdfjs-dist";
+import "pdfjs-dist/build/pdf.worker.entry";
 import Papa from "papaparse";
 import "./App.css";
-
-// 👇 Tell PDF.js where its worker file is located
-GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
 
 function App() {
   const [file, setFile] = useState(null);
@@ -27,8 +21,7 @@ function App() {
     const type = target;
 
     // --- PDF → TEXT ---
-    if (type === "pdf-to-text") {
-      // --- PDF → TEXT ---
+    // --- PDF → TEXT ---
 if (type === "pdf-to-text") {
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -62,7 +55,6 @@ if (type === "pdf-to-text") {
   downloadTextFile(text, "converted.txt");
 }
 
-    }
 
     // --- CSV → JSON ---
     else if (type === "csv-to-json") {
