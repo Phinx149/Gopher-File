@@ -1,128 +1,125 @@
-import React, { useState } from "react";
-import * as pdfjsLib from "pdfjs-dist";
-import { GlobalWorkerOptions } from "pdfjs-dist";
-import Papa from "papaparse";
-import "./App.css";
+import React, { useState } from 'react';
+import * as pdfjsLib from 'pdfjs-dist';
+import { GlobalWorkerOptions } from 'pdfjs-dist';
+import Papa from 'papaparse';
+import './App.css';
 
 // 👇 Tell PDF.js where its worker file is located
 GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
+  'pdfjs-dist/build/pdf.worker.min.mjs',
   import.meta.url
 ).toString();
 
 function App() {
   const [file, setFile] = useState(null);
-  const [output, setOutput] = useState("");
-  const [target, setTarget] = useState("pdf-to-text");
-  const [downloadLink, setDownloadLink] = useState("");
+  const [output, setOutput] = useState('');
+  const [target, setTarget] = useState('pdf-to-text');
+  const [downloadLink, setDownloadLink] = useState('');
 
   const handleFile = (e) => {
     setFile(e.target.files[0]);
-    setOutput("");
-    setDownloadLink("");
+    setOutput('');
+    setDownloadLink('');
   };
 
   async function handleConvert() {
-    if (!file) return alert("Please upload a file first.");
+    if (!file) return alert('Please upload a file first.');
     const type = target;
 
     // --- PDF → TEXT ---
-    if (type === "pdf-to-text") {
+    if (type === 'pdf-to-text') {
       // --- PDF → TEXT ---
-if (type === "pdf-to-text") {
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  let text = "";
+      if (type === 'pdf-to-text') {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let text = '';
 
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
 
-    // Group text items by their y-position (line)
-    const lines = {};
-    for (const item of content.items) {
-      const y = Math.round(item.transform[5]); // vertical position
-      if (!lines[y]) lines[y] = [];
-      lines[y].push(item.str);
-    }
+          // Group text items by their y-position (line)
+          const lines = {};
+          for (const item of content.items) {
+            const y = Math.round(item.transform[5]); // vertical position
+            if (!lines[y]) lines[y] = [];
+            lines[y].push(item.str);
+          }
 
-    // Sort by y position descending (PDF coordinate system starts at bottom)
-    const sortedY = Object.keys(lines)
-      .map(Number)
-      .sort((a, b) => b - a);
+          // Sort by y position descending (PDF coordinate system starts at bottom)
+          const sortedY = Object.keys(lines)
+            .map(Number)
+            .sort((a, b) => b - a);
 
-    for (const y of sortedY) {
-      text += lines[y].join(" ") + "\n";
-    }
+          for (const y of sortedY) {
+            text += lines[y].join(' ') + '\n';
+          }
 
-    text += "\n-------------------- Page " + i + " --------------------\n\n";
-  }
+          text +=
+            '\n-------------------- Page ' + i + ' --------------------\n\n';
+        }
 
-  setOutput(text);
-  downloadTextFile(text, "converted.txt");
-}
-
+        setOutput(text);
+        downloadTextFile(text, 'converted.txt');
+      }
     }
 
     // --- CSV → JSON ---
-    else if (type === "csv-to-json") {
+    else if (type === 'csv-to-json') {
       const text = await file.text();
       const result = Papa.parse(text, { header: true });
       const jsonStr = JSON.stringify(result.data, null, 2);
       setOutput(jsonStr);
-      downloadTextFile(jsonStr, "converted.json");
+      downloadTextFile(jsonStr, 'converted.json');
     }
 
     // --- JSON → CSV ---
-    else if (type === "json-to-csv") {
+    else if (type === 'json-to-csv') {
       const text = await file.text();
       const obj = JSON.parse(text);
       const csv = Papa.unparse(obj);
       setOutput(csv);
-      downloadTextFile(csv, "converted.csv");
+      downloadTextFile(csv, 'converted.csv');
     }
 
     // --- IMAGE CONVERSION (JPG ↔ PNG ↔ WEBP) ---
-    else if (type.startsWith("image-")) {
-      const format = type.split("-")[1];
+    else if (type.startsWith('image-')) {
+      const format = type.split('-')[1];
       const reader = new FileReader();
       reader.onload = (event) => {
         const img = new Image();
         img.src = event.target.result;
         img.onload = () => {
-          const canvas = document.createElement("canvas");
+          const canvas = document.createElement('canvas');
           canvas.width = img.width;
           canvas.height = img.height;
-          const ctx = canvas.getContext("2d");
+          const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0);
-          canvas.toBlob(
-            (blob) => {
-              const url = URL.createObjectURL(blob);
-              setDownloadLink(url);
-            },
-            `image/${format}`
-          );
+          canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            setDownloadLink(url);
+          }, `image/${format}`);
         };
       };
       reader.readAsDataURL(file);
     }
 
     // --- TEXT ↔ BASE64 ---
-    else if (type === "text-to-base64") {
+    else if (type === 'text-to-base64') {
       const text = await file.text();
       const encoded = btoa(text);
       setOutput(encoded);
-      downloadTextFile(encoded, "encoded.txt");
-    } else if (type === "base64-to-text") {
+      downloadTextFile(encoded, 'encoded.txt');
+    } else if (type === 'base64-to-text') {
       const text = await file.text();
       const decoded = atob(text.trim());
       setOutput(decoded);
-      downloadTextFile(decoded, "decoded.txt");
+      downloadTextFile(decoded, 'decoded.txt');
     }
   }
 
   function downloadTextFile(content, filename) {
-    const blob = new Blob([content], { type: "text/plain" });
+    const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     setDownloadLink(url);
   }
@@ -136,7 +133,7 @@ if (type === "pdf-to-text") {
       <select
         onChange={(e) => setTarget(e.target.value)}
         value={target}
-        style={{ marginLeft: "10px" }}
+        style={{ marginLeft: '10px' }}
       >
         <option value="pdf-to-text">PDF → Text</option>
         <option value="csv-to-json">CSV → JSON</option>
@@ -150,20 +147,20 @@ if (type === "pdf-to-text") {
 
       <button
         onClick={handleConvert}
-        style={{ marginLeft: "10px", padding: "6px 12px" }}
+        style={{ marginLeft: '10px', padding: '6px 12px' }}
       >
         Convert
       </button>
 
       {output && (
-        <div style={{ marginTop: 20, textAlign: "left" }}>
+        <div style={{ marginTop: 20, textAlign: 'left' }}>
           <h3>Output:</h3>
           <textarea
             style={{
-              width: "90%",
-              height: "250px",
-              fontFamily: "monospace",
-              whiteSpace: "pre-wrap",
+              width: '90%',
+              height: '250px',
+              fontFamily: 'monospace',
+              whiteSpace: 'pre-wrap',
             }}
             readOnly
             value={output}
