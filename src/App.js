@@ -62,6 +62,7 @@ if (type === "pdf-to-text") {
   downloadTextFile(text, "converted.txt");
 }
 
+
     }
 
     // --- CSV → JSON ---
@@ -129,7 +130,7 @@ if (type === "pdf-to-text") {
 
   return (
     <div className="App">
-      <h1>🧩 Universal File Converter (Client-Side)</h1>
+      <h1> Universal File Converter</h1>
 
       <input type="file" onChange={handleFile} />
 
