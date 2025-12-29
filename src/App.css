@@ -1,38 +1,228 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
 .App {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 800px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #2d3748;
+  margin-bottom: 10px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.subtitle {
+  text-align: center;
+  color: #718096;
+  margin-bottom: 40px;
+  font-size: 1.1rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.upload-section {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.file-label {
+  flex: 1;
+  min-width: 200px;
+  padding: 15px 25px;
+  background: #f7fafc;
+  border: 2px dashed #cbd5e0;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 600;
+  color: #4a5568;
+  transition: all 0.3s;
+}
+
+.file-label:hover {
+  border-color: #667eea;
+  background: #edf2f7;
+  transform: translateY(-2px);
+}
+
+select {
+  padding: 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #2d3748;
+  background: white;
+  cursor: pointer;
+  min-width: 200px;
+  transition: border 0.3s;
+}
+
+select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.convert-btn {
+  padding: 15px 35px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
-.App-link {
-  color: #61dafb;
+.convert-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.convert-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  background: #fed7d7;
+  color: #c53030;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border-left: 4px solid #c53030;
+}
+
+.output-section {
+  margin-top: 30px;
+}
+
+.output-section h3 {
+  margin-bottom: 15px;
+  color: #2d3748;
+}
+
+.output-box {
+  width: 100%;
+  height: 300px;
+  padding: 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  resize: vertical;
+  background: #f7fafc;
+}
+
+.output-box:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.download-section {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.download-btn {
+  display: inline-block;
+  padding: 15px 40px;
+  background: #48bb78;
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.download-btn:hover {
+  background: #38a169;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(72, 187, 120, 0.4);
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 50px;
+  padding-top: 30px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.feature {
+  text-align: center;
+  padding: 20px;
+}
+
+.feature h4 {
+  color: #2d3748;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.feature p {
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.info {
+  margin-top: 30px;
+  padding: 20px;
+  background: #edf2f7;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.info h4 {
+  color: #2d3748;
+  margin-bottom: 10px;
+}
+
+.info p {
+  color: #4a5568;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 25px;
   }
-  to {
-    transform: rotate(360deg);
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .upload-section {
+    flex-direction: column;
+  }
+
+  .file-label,
+  select,
+  .convert-btn {
+    width: 100%;
   }
 }
